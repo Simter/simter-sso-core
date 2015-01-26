@@ -1,0 +1,69 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+jar {
+    manifest {
+        attributes 'Title': 'Simter SSO Core',
+                'Version': version,
+                'Author': 'dragon',
+                'BuildTime': "${buildTime()}"
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven {url "http://192.168.0.222:8081/nexus/content/groups/public/"} 
+    jcenter()
+    //mavenCentral()
+}
+
+configurations {
+    // 排除的 jar
+    compile.exclude module: 'commons-logging'
+    compile.exclude module: 'log4j'
+}
+dependencies {
+    // log
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+
+    // test
+    testCompile "junit:junit:$junitVersion"
+    testRuntime "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+    testRuntime "org.slf4j:log4j-over-slf4j:$slf4jVersion"
+    testRuntime "ch.qos.logback:logback-classic:$logbackVersion"
+}
+
+// 初始化项目目录结构
+task createJavaProject << {
+  sourceSets*.java.srcDirs*.each { it.mkdirs() }
+  sourceSets*.resources.srcDirs*.each { it.mkdirs()}
+}
+
+// 列出编译时依赖的 jar
+task listCompileJars << {
+    configurations.compile.each { File file -> println file.name }
+}
+// 列出运行时依赖的 jar
+task listRuntimeJars << {
+    configurations.runtime.each { File file -> println file.name }
+}
+// 列出测试编译时依赖的 jar
+task listTestCompileJars << {
+    configurations.testCompile.each { File file -> println file.name }
+}
+// 列出测试运行时依赖的 jar
+task listTestRuntimeJars << {
+    configurations.testRuntime.each { File file -> println file.name }
+}
+
+// 获取当前时间
+def buildTime() {
+    def df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    //df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
