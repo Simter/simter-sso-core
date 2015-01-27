@@ -31,6 +31,10 @@ dependencies {
     // log
     compile "org.slf4j:slf4j-api:$slf4jVersion"
 
+    // web
+    compile "javax.servlet:javax.servlet-api:$servletVersion"
+    runtime "jstl:jstl:$jstlVersion"
+
     // test
     testCompile "junit:junit:$junitVersion"
     testRuntime "org.slf4j:jcl-over-slf4j:$slf4jVersion"
